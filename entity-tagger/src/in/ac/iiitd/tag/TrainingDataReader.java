@@ -54,6 +54,7 @@ public class TrainingDataReader {
   }
 
   public void read() throws Exception {
+	
     File location = new File(dataFilesLocation);
     File[] inputs;
     if (location.isDirectory()) {
@@ -66,7 +67,7 @@ public class TrainingDataReader {
     for (File input : inputs) {
       if (input.getName().endsWith("~")) continue;
       currfile++;
-      log.info("Processing file (" + currfile + "/" + totfiles + "): " + 
+      log.info("Processing file (" + currfile  + "): " + 
         input.getName());
       BufferedReader reader = new BufferedReader(new InputStreamReader(
         new FileInputStream(input)));
@@ -103,12 +104,14 @@ public class TrainingDataReader {
           } else {
             aCounts.add(StringUtils.join(new String[] {
               prevPos.name(), pos.name()}, ":"));
+             
           }
           prevPos = pos;
           wordIndex++;
         }
       }
       reader.close();
+      System.out.println("HMM Model Built.");
     }
     // normalize counts to probabilities
     int numPos = NameParts.values().length;

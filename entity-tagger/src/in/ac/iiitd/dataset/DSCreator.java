@@ -1,5 +1,7 @@
 package in.ac.iiitd.dataset;
 
+import in.ac.iiitd.tag.HMMBuilder;
+
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,11 +22,11 @@ import java.util.Random;
  */
 public class DSCreator {
 	
-	private static final String ANCHOR = "/media/venkatesh/Data/work/Entity Name Project/anchors";
-	private static final String CATEGORY = "/media/venkatesh/Data/work/Entity Name Project/Category Words";
-	private static final String NAME = "/media/venkatesh/Data/work/Entity Name Project/name words";
+	private static final String ANCHOR = "/home/venkatesh/data/work/Entity Name Project/manual-ds/anchors";
+	private static final String CATEGORY = "/home/venkatesh/data/work/Entity Name Project/manual-ds/Category Words";
+	private static final String NAME = "/home/venkatesh/data/work/Entity Name Project/manual-ds/name words";
 
-	private static final String DATASET_FILE = "/media/venkatesh/Data/work/Entity Name Project/dataset.txt";
+	private static final String DATASET_FILE = HMMBuilder.DATADIR;
 
 	private static List<String> anchors = null;
 	private static List<String> categories = null;
@@ -37,6 +39,7 @@ public class DSCreator {
 			loadFiles(); //Take all inputs
 			normalize(); //Clean the inputs 
 			createDataSet(); //make full entity names using the inputs and store them with annotations.
+			System.out.println("DataSet Created.");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,8 +82,26 @@ public class DSCreator {
 			dataset.add(businessName);
 		}
 		
+		for(String anchor: anchors) {
+			String name = names.get(randomGenerator.nextInt(namesCount));
+			name = annotate(name,"CN");
+			anchor = annotate(anchor, "AN");
+			businessName = MessageFormat.format("{0} {1}", name, anchor);
+			dataset.add(businessName);
+		}
+		
+		for(String name:  names) {
+			String category = categories.get(randomGenerator.nextInt(categories.size()));
+			category = annotate(category,"CA");
+			name = annotate(name, "CN");
+			businessName = MessageFormat.format("{0} {1}", name, category);
+			dataset.add(businessName);
+		}		
+		
 		saveDataSet(DATASET_FILE);
 	}
+	
+	
 
 	private static void saveDataSet(String datasetFile) {
 		String content = "";

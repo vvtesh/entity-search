@@ -45,6 +45,7 @@ public class HmmTagger {
   private String dataDir;
   private String dictionaryLocation;
   private String hmmFileName;
+  private String hmmDotFileName;
   
   private Map<String,Integer> words = 
     new HashMap<String,Integer>();
@@ -61,6 +62,10 @@ public class HmmTagger {
     this.hmmFileName = hmmFileName;
   }
 
+  public void setHmmDotFileName(String hmmFileName) {
+	    this.hmmDotFileName = hmmFileName;
+  }
+  
   /**
    * Builds up an HMM where states are parts of speech given by the Pos
    * Enum, and the observations are actual words in the tagged Brown
@@ -146,10 +151,14 @@ public class HmmTagger {
         public void write(Writer writer, OpdfInteger opdf) 
             throws IOException {
           String s = "IntegerOPDF [";
-          for (int i = 0; i < opdf.nbEntries(); i++)
-            s += OBS_FORMAT.format(opdf.probability(
-              new ObservationInteger(i))) + " ";
+          for (int i = 0; i < opdf.nbEntries(); i++) {
+        	    double opdfProb = opdf.probability(
+      	              new ObservationInteger(i));
+        	    if (Double.isNaN(opdfProb)) opdfProb = 0;
+	            s += OBS_FORMAT.format(opdfProb) + " ";
+          }
             writer.write(s + "]\n");
+            System.out.println(s);
           }
     };
     HmmWriter.write(fileWriter, opdfWriter, hmm);
@@ -157,6 +166,30 @@ public class HmmTagger {
     fileWriter.close();
   }
 
+  public void saveToDotFile(Hmm<ObservationInteger> hmm) 
+	      throws Exception {
+	    FileWriter fileWriter = new FileWriter(hmmDotFileName);
+	    // we create our own impl of the OpdfIntegerWriter because we want
+	    // to control the formatting of the opdf probabilities. With the 
+	    // default OpdfIntegerWriter, small probabilities get written in 
+	    // the exponential format, ie 1.234..E-4, which the HmmReader does
+	    // not recognize.
+	    StringBuilder sb = new StringBuilder();
+	    
+	    sb.append("digraph G {\n");
+	    
+	    for(int i=0;i<5;i++) {	    	
+	    	for(int j=0; j<5; j++) {	    		
+	    		double prob = hmm.getAij(i, j);
+	    		if (prob < 0.001) continue;
+	    		sb.append(NameParts.values()[i].toString() + " -> " + NameParts.values()[j].toString() + " [label=" + String.format("%.3f",prob) + "];\n");
+	    	}
+	    }
+	    sb.append("}");
+	    fileWriter.write(sb.toString());
+	    fileWriter.flush();
+	    fileWriter.close();
+	  }
   /**
    * Given the HMM, returns the probability of observing the sequence 
    * of words specified in the sentence. Uses the Forward-Backward 
@@ -213,30 +246,27 @@ public class HmmTagger {
     if (words == null || words.size() == 0) {
       loadWordsFromDictionary();
     }
-    String[] tokens = tokenizeSentence(sentence);
     
+    //get word position
     int wordPos = -1;
-    for (int i = 0; i < tokens.length; i++) {
-      if (tokens[i].equalsIgnoreCase(word)) {
-        wordPos = i;
-        break;
-      }
-    }
-    if (wordPos == -1) {
-      throw new IllegalArgumentException("Word [" + word + 
-        "] does not exist in sentence [" + sentence + "]");
+    String[] tokens = tokenizeSentence(sentence);
+    for(int i=0; i<tokens.length; i++) {
+    	if (tokens[i].equalsIgnoreCase(word)) {
+    		wordPos = i;
+    	}
     }
     
+        
     int wordPosFound = 0;
     try {
     	List<ObservationInteger> observations = getObservations(tokens);
     	ViterbiCalculator vc = new ViterbiCalculator(observations, hmm);
         int[] ids = vc.stateSequence();
+        ids[0] = 0;
         if (ids.length > wordPos) wordPosFound = ids[wordPos];
     } catch (Exception e) {
     	e.printStackTrace();
-    }
-    
+    }    
     return NameParts.values()[wordPosFound];
   }
 
@@ -308,7 +338,7 @@ public class HmmTagger {
     	  observations.add(new ObservationInteger(words.get(token)));
       else {
     	  if (((i+1) / tokens.length) < 0.5 )
-    		  observations.add(new ObservationInteger(words.get("zia")));
+    		  observations.add(new ObservationInteger(words.get("gloria")));
     	  else
     		  observations.add(new ObservationInteger(words.get("delhi")));
       }
