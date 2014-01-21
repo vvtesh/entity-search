@@ -1,0 +1,239 @@
+% THIS IS SIGPROC-SP.TEX - VERSION 3.1
+% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
+% APRIL 2009
+%
+% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
+% LaTeX2e document class file for Conference Proceedings submissions.
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) Page numbering
+% ---------------------------------------------------------------------------------------------------------------
+% It is an example which *does* use the .bib file (from which the .bbl file
+% is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission,
+% you need to 'insert'  your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% Questions regarding SIGS should be sent to
+% Adrienne Griscti ---> griscti@acm.org
+%
+% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
+% Gerald Murray ---> murray@hq.acm.org
+%
+% For tracking purposes - this is V3.1SP - APRIL 2009
+
+\documentclass{acm_proc_article-sp}
+
+\begin{document}
+
+\title{Structural Dissection of Business Entity Names}
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{3} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Venkatesh Vinayakarao\\
+       \affaddr{Indraprastha Institute of Information Technology}\\
+       \affaddr{New Delhi}\\
+       \email{venkateshv@iiitd.ac.in}
+% 2nd. author
+\alignauthor
+Amani Kongara\\
+       \affaddr{Indraprastha Institute of Information Technology}\\
+       \affaddr{New Delhi}\\
+       \email{kongara1240@iiitd.ac.in}
+% 3rd. author
+\alignauthor
+Srikanta Bedathur\\
+       \affaddr{Indraprastha Institute of Information Technology}\\
+       \affaddr{New Delhi}\\
+       \email{bedathur@iiitd.ac.in}
+}
+\date{20 Jan 2013}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+\begin{abstract}
+Business entity (also known as local listing) names pose big challenge for search engines. Business entities like any other entity (people, place or product) are found to be unstructured at the outset and typically demonstrate human creativity. Our claim is that there are parts of these names that are recognizable and useful. We inspect 11,537 business entities from Phoenix, USA provided by the Yelp data set \footnote{http://www.yelp.com/dataset\_challenge/} towards gaining deep insights into how they are structured and if they can be recognized and normalized effectively. We argue about the characteristics of such names in detail. We go on to use this normalization towards recommending a standard for normalized business names including a definition of its constituents and characteristics. A standard is much necessary in this domain since there are varied data providers and multiple search engine companies consume their data. Such a standard will alleviate the issues of record linkage, matching and ranking. We see many future applications of such standardization towards a better business entity search. In this process, we also make available, a manually tagged corpus of entity names for future research.
+\end{abstract}
+
+%A category including the fourth, optional field follows...
+\category{H.3.3}{Information Storage and Retrieval}{Information Search and Retrieval}
+
+\keywords{Tagging, Annotation, Normalization, Standardization} % NOT required for Proceedings
+
+\section{Introduction}
+Local search refers to the search of business in any specific place or their neighbourhoods. Let's say you are on the road and wish to locate the nearest seafood restaurant. In this case, you are doing a local search. With advances in mobile technologies and internet, local search has become indispensable. Business entity names play a significant role in the process of local search.
+
+At the outset, business entity names seem to have no obvious structure. They are reflections of human creativity and the nature of business. We believe that a structural understanding of names will allow us to recognize, extract and normalize several of its parts. Most commercial search engines such as Google and Bing are known to buy foot-on-the-road entity data. Also, they may have their own proprietary systems to mine the web. Owing to existence of several such data sources (including prominent providers such as yelp and trip-advisor) and the variety in the way they capture the names, each entity gets morphed into several variants and that causes complications in record linkage, matching and ranking. For instance, consider, "Queen Elizabeth's Grammar School for Boys, Barnet, London". This is also known as "QE Boys", "QE Grammar School", "Queen Elizabeth's Grammar School" and "Queen Elizabeth's School". These are just few of the references to this school found on the web. An entity data provider may choose any of such ways to capture this entity, by name.
+
+Towards a successful local search experience, its important to get a deep understanding of entity names. In this paper, we answer the following questions:\begin{enumerate}
+\item What constitutes a name? 
+\item Is there a way to extract core name (the keywords and other parts of the name that matter the most to search)?
+\item Can the names be standardized so that data providers can converge onto a single representation? If yes, how should the standardized name look like?
+\end{enumerate}	
+
+\section{Related Work}
+There has been lot of work done on text document segmentation\cite{Elliman:1990:RSC:78382.78394}\cite{Beeferman:1999:SMT:309497.309507}\cite{Huang:2003:AML:945486.945492} and Query Segmentation \cite{Hagen:2011:QSR:1963405.1963423}\cite{Hagen:2010:PNQ:1835449.1835621}\cite{Yu:2009:QSU:1557670.1557680}. 
+Document segmentation typically looks at finding coherent sentences from textual documents through statistic, linguistic or probabilistic means. Query segmentation is much closer to our work since the text being segmented are short and have named entities in them. There has also been considerable work done on named entity recognition\cite{Guo:2009:NER:1571941.1571989}\cite{Li:2012:TNE:2348283.2348380} and linguistic processing of short text \cite{Murnane:2013:RLU:2487788.2488162}\cite{Taksa:2007:UWS:1262257.1262320}. However, the same techniques that work with queries do not work with entity names. For example, "My Sister Toy Shop" should lead to "My Sister" as the core name and "Toy Shop" as the category element. Most of the POS taggers will identify "My" as a Preposition which is not at all the case in this context. "A Stitch in Time" seems to make custom fit clothes. This name should not be split. Entire text becomes the core name.
+
+Takahashi et al. \cite{Takahashi:2010:ETM:1884017.1884070}, analyze the truthfulness of modifiers such as "authentic", "impressive" in entity names. Oates et al.,\cite{Oates:2002:ULS:584931.584939} look for same entities in free text using LSA based approach. There has been several attempts at normalizing text such as gene name normalization\cite{Fang:2006:HGN:1567619.1567627}, person name normalization\cite{Magdy:2007:ACP:1654576.1654582} and location normalization \cite{Li:2002:LNI:1072228.1072355}. Business entity name normalization depends on these but is much more complicated since names could be a combination of person name, location, domain, etc.
+
+Bouquet et al.,\cite{Bouquet:2008:ENS:1446294.1446425} proposed ENS (Entity Name System) to refer names uniformly. Their approach is to hash the names to uniform identifier. For example, "Paolo Bouquet" is referred to as "ok200706301185791252056" and is geared towards generation of such an identifier. One of their requirements is to maintain a large repository of global entity names. We take a different perspective of normalizing names. Our work could serve as a pre-processing step to this kind of normalization. While unique representation for a name happens to be the objective of Bouquet et al's approach, our approach works towards improving IR by extracting key elements of a name. 
+
+Our work is to extract, re-organize and normalize the name parts. This does not always result in the same unique representation. Yet, this approach does generate semantically richer names. Humans can identify that "Nimbus American Bistro N' Brewery" refers to an entity whose name might be "Nimbus" or "Nimbus American" while belonging to "Bistro" and "Brewery" categories. We believe this can be learned and such names can be machine translated.
+
+\section{Business Entity Name}
+A typical entity name comprises of a core name along with various segments such as business categories and location. Since naming of an entity demands human creativity, there are several forms that an entity name can take. Our attempt to understand the structure of entity names resulted in the following EBNF.
+\begin{verbatim}
+EntityName -> [Address], CoreName, [Location],
+ 			    [Others], [Domain], [Others], 
+ 			    [Address], [Anchor];
+Location -> [Lane] , [Street] , [Place] ;                                 
+CoreName -> String, {String};
+Preposition -> String, {String};
+Domain -> Domain , [String] , Domain | Domain, 
+			Category | Category , [String] , 
+			Category | Category;
+Anchor -> String ;
+Lane -> String;
+Street -> String, {String};
+Place -> String,{String} ;
+Category -> Category, Category | String, {String};
+
+Legend: [...] represents the optional fields, 
+{...} represents the repetition of the field, 
+"\," represents the concatenation and 
+"\|" represents the alteration.
+\end{verbatim}
+
+Essentially, we observed the entity name to contain these high level items:
+\begin{enumerate}
+
+\item Address: In "75th Thai Taste Restaurant", "75th" is part of the address and is followed by the core name "Thai Taste" whereas "Restaurant" is the category. The Address field may occur in the starting or the later part with the core name of an entity name. Note that, this example is also interesting because of the fact that even "Thai Taste", "75th Thai Taste", "75th Thai" were manually categorised as CoreName when we conducted a survey.
+\item CoreName:  The name, Scottsdale Medical Imaging LTD, has Scottsdale as the core name of the entity that distinguishes this entity from rest of the entities in the "Medical Imaging" domain. In the example "A Stitch in Time", the whole string is a core name. CoreName plays a huge role in identification of an entity and thus is a crucial component of entity name. We observed that 66\% of these CoreNames where either a famous God or Person. Around 20\% were a location name in some form.
+\item Domain: In "Every Kid's Dentist \& Orthodontics", "Every Kid's" is the core name of the entity which distinguishes it among the other entities of the categories Dentists and the Orthodontics. In "Autohaus Service \& Performance Center", "Autohaus" is the core name, whereas "Service" \& "Performance Centre" is a domain. Most of the entity names occur with the domain to which it is associated. It can be one or more categories under one or more domains even. This generally occurs if a single entity name is used for more than one service being offered.
+\item Anchor: In "KC \& Co.", "KC" is the core name and "Co." is the anchor. Similarly in "Phoenix Paediatrics Ltd", "Phoenix" is the core name, "Paediatrics" is its domain and "Ltd" is its anchor word. HongKong's Company Naming Guideline \footnote{http://www.cr.gov.hk/en/publications/docs/name-e.pdf} says that these anchors ("Limited", "Company", "Company Limited", etc) will be ignored while checking if the companies are same.
+\item Others: "R Bar at the Camelback Inn" contains the core name "R Bar", the connector "at" and the address "The Camelback Inn". We bucket such items that do not fall into any other recognizable part as "others".
+\end{enumerate}
+
+As we see there are many optional fields and the repetitions in the above grammar. An entity name can be of any combination of those optional fields. Hence, their normalization is an interesting task which can lead us to better relevance.
+
+\section{Normalization}
+We see normalization as a three step process:
+\begin{enumerate}
+\item Extract/Annotate:  We had to extract the name components. We used HMM and CRF approaches to do this. We also explored C99 initially but had to drop its usage since it is known to have limitations over short text. We used jtextpro and apache UIMA HMM taggers to code the same. We manually verified the output. We could achieve 96\% accuracy in segmenting the text. To train the models, we used the following intuitions:
+\begin{enumerate}
+\item URL Breaking: URLs give some indication of which part of the entity name is core name. For example, "Clearly Professional Window Cleaning" is www. cpwindowcleaning.com. Looking at several names, we can say that "window cleaning" is a popular category and "Clearly Professional" or "CP" is what uniquely identifies them. 
+\item Address helps us resolve the location part of the name (if any) and also to detect LIE (location in entity). For example,"Vijayawada Public School, Vijayawada" is both an LIE as well as has location at the end, in its name.
+\item "Arizona Auto Care" could be searched as "Arizona car care", "Arizona car service", "Arizona truck repair" and so on. There should be a way to extract these synonyms. A look at several companies in the auto care business allows us to capture a set of synonyms for "auto care". 
+\item Abbreviations and Acronyms: BBQ, bnb, McD, Caltech, zoo vs zoological park. These can be found not only in core name but any part of the name. We used wordnet dictionary to extract non-dictionary words and used it to guess abbreviations and acronyms. We used wikipedia corpus to extract "related words" using a sliding window technique over the words tokenized.  
+\item Name Breaking: PetSmart could be searched as "Pet Smart". We keep the investigation of related work on decompounding as future work. For now, we rely purely on capitalization.
+\item Anchor Detection: "Ltd", "Pvt" should be detected. These anchors are very limited in English and when limited to American companies. Hence we decided to use a manual list to detect them.
+\item Multi-Language nature - Its common to see chinese restaurants in India, Indian Restaurants in US and French restaurants everywhere!. Its fair to expect that the names will carry multiple languages. "Tortas El Guero", Gorditas El Tio are examples. 
+\end{enumerate}
+\item Re-order: Sort the constituents by their rank in how much they matter to search engines. Our intuition is that those parts are more helpful in uniquely identifying the entity. This is inspired from the fact that most LTR algorithms learned to give more weight to the terms appearing in the initial positions. Obviously, core name (or Real name as mentioned above) should be the most important and hence should come first. We conducted a short survey of 500 annotated names and asked 5 people to sort the parts such that the most important part is at the beginning and least one at the end. The results were as follows:
+\begin{center}
+  \begin{tabular}{ | l | r |}
+    \hline
+    Item & Percent Agree \\ \hline 
+    CoreName (at 1st Place) & 99\%  \\ \hline    
+    Category (at 2nd Place) & 76\% \\ \hline
+    Location (at 3rd Place) & 72\% \\ \hline 
+    Domain (at 4th Place) & 52\% \\ \hline 
+    Anchor (at 5th Place) & 91\% \\ \hline 
+    Prep (at 6th Place) & 99\% \\ \hline
+  \end{tabular}
+\end{center}
+\item Normalize: Each constituent needs to be normalized. For example, Mumbai and Bombay, Chennai and Madras refer to same cities. Similarly, Tech Mahindra and Satyam Computers, Queen Elizabeth School and QEBoys are same. For now, we have used a manual set of translations to normalize common words/phrases such as "and" for "'N", "BBQ" for "Barbeque" and so on. In the final output, we create a synset (a set of synonyms or alternate phrases) for each part of the name and associate it to the normalized business name.
+\end{enumerate}
+ 
+\section{Normalized Names}
+With these insights, we implemented the system and tested it on the dataset. 
+
+Some examples of the normalized text looks as follows:
+
+\begin{center}
+  \begin{tabular}{ |p{2cm} | p{3cm} | p{2cm} | }
+    \hline
+    Name & Normalized & Synset \\ \hline
+    A Stitch in Time & A Stitch in Time, Tailors, None, Tempe, None. &  \\ \hline
+    Scottsdale Medical Imaging LTD & Scottsdale, Healthcare, Medical  Imaging, Scottsdale, Limited & esmil, smil  \\ \hline
+    California Institute of Technology & California, Technology Institute, Educational Institutions, University, Pasadena, None. & caltech \\ \hline
+  \end{tabular}
+\end{center}
+
+In the above table, normalized name is ordered as
+normalized\_core\_name, domain, category, location, others.
+
+\section{Conclusion and Future Work}
+There is lot of future work that needs to be done. Most importantly, it will be interesting to see the Precision, Recall and F-Scores for LTR sets when the names are normalized. Secondly, language issues in name are left out. We worked only with English names and names that have non-dictionary words were assumed to be abbreviations or acronyms. Thirdly, we stopped with 2 levels of category description (domain, category) considering that we had only 11k items in our dataset. In real world datasets, the category ontology extraction will be a bigger challenge. There is also scope for improvement with spellers, word decompounders and location repositories. \cite{vilain-huggins-wellner:2009:RANLP09} emphasizes on the use of multiple knowledge sources and non-local data to improve entity identification. Same should work for us, as well. \cite{Vilain:2007:EEB:1614108.1614154} suggests with evidence that the existing name extraction approaches are not good enough. Hopefully, our work should help such efforts. 
+
+From this work, we believe a standard representation of entity names can be achieved and we showed one way of doing it with high accuracy on the Yelp dataset.
+
+
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+\bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+
+% This next section command marks the start of
+% Appendix B, and does not continue the present hierarchy
+
+\balancecolumns
+% That's all folks!
+\end{document}
